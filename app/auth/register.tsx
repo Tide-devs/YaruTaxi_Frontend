@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Modal, ScrollView, StyleSheet, Image, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Modal, StyleSheet, Image, KeyboardAvoidingView, Platform, Alert, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import Checkbox from 'expo-checkbox';
+
+import { savedToken } from '../../services/api';
+import { termsOfService } from '@/assets/files/legal';
+
+const baseUrl = process.env.API_BASE_URL || 'http://192.168.0.16:3000/api/';
 
 export default function RegisterScreen() {
  const router = useRouter();
@@ -19,28 +24,56 @@ export default function RegisterScreen() {
  const [acceptTerms, setAcceptTerms] = useState(false);
  const [modalVisible, setModalVisible] = useState(false);
 
- const handleRegister = () => {
-  // registration logic here
+ const handleRegister = async () => {
+  try {
+   const response = await fetch(`${baseUrl}users/register`, {
+    method: 'POST',
+    headers: {
+     'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+     name: formData.name,
+     lastName: formData.lastname,
+     email: formData.email,
+     password: formData.password,
+     phone: formData.phone,
+    }),
+   });
+   const data = await response.json();
+   if (response.ok) {
+    await savedToken(data.token);
+    Alert.alert('Success', 'Registration successful! Please confirm your account.', [
+     { text: 'OK', onPress: () => router.push('/auth/confirm') }
+    ]);
+   }
+  } catch (error) {
+   Alert.alert('Error', 'There was an error during registration. Please try again.');
+   console.error('Registration error:', error);
+  }
  };
 
+ const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=\[\]{};:'",.<>\/?\\|`~]).{8,}$/;
+
  const canRegister =
-  formData.name &&
-  formData.lastname &&
-  formData.email.includes('@') &&
-  formData.phone &&
-  formData.password.length >= 6 &&
+  formData.name.trim() !== '' &&
+  formData.lastname.trim() !== '' &&
+  /\S+@\S+\.\S+/.test(formData.email) &&
+  /^\d+$/.test(formData.phone) &&
+  formData.phone.length >= 7 &&
+  strongPasswordRegex.test(formData.password) &&
   formData.password === formData.confirmPassword &&
   acceptTerms;
 
  return (
   <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : undefined} >
-   {/* <ScrollView showsVerticalScrollIndicator={false}> */}
+   <View style={styles.logoContainer}></View>
 
    <View style={styles.logoContainer}>
     <Image source={require('../../assets/images/yarutax.png')} style={styles.logo} resizeMode="contain" />
    </View>
 
    <Text style={styles.title}>Create Account</Text>
+   <Text style={styles.subtitle}>Join YaruTax today! Start traveling easily and affordably.</Text>
 
    <View style={styles.form}>
     <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' }}>
@@ -68,12 +101,7 @@ export default function RegisterScreen() {
     </View>
 
     <View style={styles.checkboxContainer}>
-     <Checkbox
-      value={acceptTerms}
-      onValueChange={setAcceptTerms}
-      color={acceptTerms ? '#000' : undefined}
-      style={{ width: 22, height: 22, marginRight: 12, borderRadius: 4 }}
-     />
+     <Checkbox value={acceptTerms} onValueChange={setAcceptTerms} color={acceptTerms ? '#000' : undefined} style={{ width: 22, height: 22, marginRight: 12, borderRadius: 4 }} />
      <Text style={[styles.termsText, { textAlign: 'left', marginTop: 0 }]}>
       I accept the{' '}
       <Text style={styles.link} onPress={() => setModalVisible(true)}>
@@ -90,14 +118,25 @@ export default function RegisterScreen() {
      <Text style={styles.loginText}>Already have an account? Login</Text>
     </TouchableOpacity>
    </View>
-   {/* </ScrollView> */}
 
    <Modal visible={modalVisible} animationType="slide">
-    {/* Keep your existing modal code here */}
+    <View style={styles.modalContainer}>
+     <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeButton}>
+      <Ionicons name="close" size={28} color="#000" />
+     </TouchableOpacity>
+
+     <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
+      <Text style={styles.modalTitle}>
+       Privacy Policy
+      </Text>
+      <Text style={styles.modalText}>
+       {termsOfService}
+      </Text>
+     </ScrollView>
+    </View>
    </Modal>
   </KeyboardAvoidingView>
  );
-
 }
 
 const styles = StyleSheet.create({
@@ -141,14 +180,6 @@ const styles = StyleSheet.create({
   paddingVertical: 14,
   borderRadius: 10,
   alignItems: 'center',
- },
- registerButton: {
-  marginTop: 10,
-  alignItems: 'center',
- },
- registerText: {
-  color: '#000',
-  fontWeight: 'bold',
  },
  buttonText: {
   color: '#fff',

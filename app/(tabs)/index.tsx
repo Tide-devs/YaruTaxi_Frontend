@@ -8,7 +8,7 @@ export default function Index() {
   useEffect(() => {
     // Espera un poquito antes de navegar, para que el RootLayout esté montado
     const timeout = setTimeout(() => {
-      router.replace("/auth/login");
+      router.replace("/auth/loading");
     }, 100);
 
     return () => clearTimeout(timeout);
