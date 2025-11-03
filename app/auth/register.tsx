@@ -7,7 +7,7 @@ import Checkbox from 'expo-checkbox';
 import { savedToken } from '../../services/api';
 import { termsOfService } from '@/assets/files/legal';
 
-const baseUrl = process.env.API_BASE_URL || 'http://192.168.0.16:3000/api/';
+const baseUrl = process.env.API_BASE_URL || 'http://192.168.100.12:3000/api/';
 
 export default function RegisterScreen() {
  const router = useRouter();

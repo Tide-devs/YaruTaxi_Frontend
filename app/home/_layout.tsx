@@ -5,16 +5,16 @@ export default function HomeLayout() {
  return (
   <Tabs screenOptions={{ headerShown: false }}>
    <Tabs.Screen
-    name="index" // o "home" según tu archivo: app/home/index.tsx -> "index"
+    name="index" 
     options={{
-     title: "Inicio",
+     title: "Home",
      tabBarIcon: ({ color, size }) => <FontAwesome name="home" size={size} color={color} />
     }}
    />
    <Tabs.Screen
-    name="settings" // ejemplo: app/home/settings.tsx
+    name="settings" 
     options={{
-     title: "Ajustes",
+     title: "Settings",
      tabBarIcon: ({ color, size }) => <FontAwesome name="cog" size={size} color={color} />
     }}
    />

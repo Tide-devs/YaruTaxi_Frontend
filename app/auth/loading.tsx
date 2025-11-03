@@ -10,13 +10,12 @@ export default function AuthLoadingScreen() {
    const token = await getToken()
 
    if (token) {
-    router.push('/home/home')
+    router.push('/home')
    } else {
     router.push('/auth/login')
    }
   }
 
-  console.log('test')
   checkAuth();
  }, [])
 

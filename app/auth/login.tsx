@@ -6,7 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { privacyPolicy, termsOfService } from '@/assets/files/legal';
 import { savedToken } from '@/services/api';
 
-const baseUrl = process.env.API_BASE_URL || 'http://192.168.0.13:3000/api/';
+const baseUrl = process.env.API_BASE_URL || 'http://192.168.100.12:3000/api/';
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -34,7 +34,7 @@ export default function LoginScreen() {
         const data = await response.json();
         if (response.ok) {
           await savedToken(data.token)
-          router.push('/home/home')
+          router.push('/home')
         } else {
           Alert.alert('Error', data.message)
         }

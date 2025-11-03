@@ -4,7 +4,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, KeyboardAvo
 
 import { getToken } from '@/services/api';
 
-const baseUrl = process.env.API_BASE_URL || 'http://192.168.0.16:3000/api/';
+const baseUrl = process.env.API_BASE_URL || 'http://192.168.100.12:3000/api/';
 
 export default function ConfirmRegister() {
  const router = useRouter();

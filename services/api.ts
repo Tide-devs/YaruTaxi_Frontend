@@ -1,4 +1,4 @@
-const baseUrl = process.env.API_BASE_URL || 'http://localhost:3000/api/';
+const baseUrl = process.env.API_BASE_URL || 'http://192.168.100.12:3000/api/';
 
 import * as SecureStore from 'expo-secure-store';
 
