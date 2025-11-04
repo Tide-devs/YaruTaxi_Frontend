@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Modal, ScrollView, StyleSheet, Image, KeyboardAvoidingView, Platform, Alert } from 'react-native';
-import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import Constants from "expo-constants";
+import { useRouter } from 'expo-router';
+import { jwtDecode } from 'jwt-decode';
+import React, { useState } from 'react';
+import { Alert, Image, KeyboardAvoidingView, Modal, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 import { privacyPolicy, termsOfService } from '@/assets/files/legal';
 import { savedToken } from '@/services/api';
 
-const baseUrl = process.env.API_BASE_URL || 'http://192.168.100.12:3000/api/';
+const baseUrl = Constants.expoConfig?.extra?.API_BASE_URL;
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -21,7 +23,7 @@ export default function LoginScreen() {
       setShowPasswordInput(true);
     } else if (email && password.value) {
       try {
-        const response = await fetch(`${baseUrl}users/login`, {
+        const response = await fetch(`${baseUrl}auth/login`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -34,7 +36,10 @@ export default function LoginScreen() {
         const data = await response.json();
         if (response.ok) {
           await savedToken(data.token)
-          router.push('/home')
+          const decode: any = jwtDecode(data.token)
+          if (decode.role === 'user') {
+            router.push('/home')
+          }
         } else {
           Alert.alert('Error', data.message)
         }
@@ -45,7 +50,11 @@ export default function LoginScreen() {
   };
 
   const handleRegister = () => {
-    router.push('/auth/register'); // Redirect to the register screen
+    router.push('/auth/register');
+  };
+
+  const handleRecover = () => {
+    router.push('/auth/recover');
   };
 
   const openModal = (type: 'terms' | 'privacy') => {
@@ -56,7 +65,7 @@ export default function LoginScreen() {
   const canContinue = email.includes('@') && (!showPasswordInput || password.value.length > 3);
 
   return (
-    <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : undefined} >
+    <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} >
       <View style={styles.logoContainer}>
         <Image source={require('../../assets/images/yarutax.png')} style={styles.logo} resizeMode="contain" />
       </View>
@@ -90,6 +99,9 @@ export default function LoginScreen() {
 
         <TouchableOpacity onPress={handleRegister} style={styles.registerButton}>
           <Text style={styles.registerText}>Don't have an account? Register</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={handleRecover} style={styles.recoverButton}>
+          <Text style={styles.recoverText}>Forgot your password? Recover it</Text>
         </TouchableOpacity>
 
         <Text style={styles.termsText}>
@@ -171,6 +183,14 @@ const styles = StyleSheet.create({
   registerButton: {
     marginTop: 10,
     alignItems: 'center',
+  },
+  recoverButton: {
+    marginTop: 5,
+    alignItems: 'center',
+  },
+  recoverText: {
+    color: '#000',
+    fontWeight: 'bold',
   },
   registerText: {
     color: '#000',

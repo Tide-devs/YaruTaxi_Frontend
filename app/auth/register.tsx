@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Modal, StyleSheet, Image, KeyboardAvoidingView, Platform, Alert, ScrollView } from 'react-native';
-import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import Checkbox from 'expo-checkbox';
+import Constants from "expo-constants";
+import { useRouter } from 'expo-router';
+import React, { useState } from 'react';
+import { Alert, Image, KeyboardAvoidingView, Modal, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
-import { savedToken } from '../../services/api';
 import { termsOfService } from '@/assets/files/legal';
+import { savedToken } from '../../services/api';
 
-const baseUrl = process.env.API_BASE_URL || 'http://192.168.100.12:3000/api/';
+const baseUrl = Constants.expoConfig?.extra?.API_BASE_URL;
 
 export default function RegisterScreen() {
  const router = useRouter();
@@ -26,7 +27,7 @@ export default function RegisterScreen() {
 
  const handleRegister = async () => {
   try {
-   const response = await fetch(`${baseUrl}users/register`, {
+   const response = await fetch(`${baseUrl}auth/register`, {
     method: 'POST',
     headers: {
      'Content-Type': 'application/json',
@@ -65,7 +66,7 @@ export default function RegisterScreen() {
   acceptTerms;
 
  return (
-  <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : undefined} >
+  <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} >
    <View style={styles.logoContainer}></View>
 
    <View style={styles.logoContainer}>

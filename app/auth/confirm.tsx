@@ -1,10 +1,11 @@
-import React from 'react';
+import Constants from "expo-constants";
 import { useRouter } from 'expo-router';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, KeyboardAvoidingView, Platform, Alert } from 'react-native';
+import React from 'react';
+import { Alert, Image, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 import { getToken } from '@/services/api';
 
-const baseUrl = process.env.API_BASE_URL || 'http://192.168.100.12:3000/api/';
+const baseUrl = Constants.expoConfig?.extra?.API_BASE_URL;
 
 export default function ConfirmRegister() {
  const router = useRouter();
@@ -15,7 +16,7 @@ export default function ConfirmRegister() {
  const handleRegister = async () => {
   const token = await getToken();
   try {
-   const response = await fetch(`${baseUrl}users/register/verify`, {
+   const response = await fetch(`${baseUrl}auth/register/verify`, {
     method: 'POST',
     headers: {
      'Content-Type': 'application/json',
@@ -38,7 +39,7 @@ export default function ConfirmRegister() {
  };
 
  return (
-  <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+  <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} >
    <View style={styles.logoContainer}>
     <Image source={require('../../assets/images/yarutax.png')} style={styles.logo} resizeMode="contain" />
    </View>

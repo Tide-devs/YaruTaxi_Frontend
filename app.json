@@ -2,6 +2,9 @@
   "expo": {
     "name": "yarutax",
     "slug": "yarutax",
+    "extra": {
+      "API_BASE_URL": "http://192.168.100.12:3000/api/"
+    },
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",

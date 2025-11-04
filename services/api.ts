@@ -1,6 +1,7 @@
-const baseUrl = process.env.API_BASE_URL || 'http://192.168.100.12:3000/api/';
-
+import Constants from "expo-constants";
 import * as SecureStore from 'expo-secure-store';
+
+const baseUrl = Constants.expoConfig?.extra?.API_BASE_URL;
 
 export async function savedToken(token: string) {
  try {

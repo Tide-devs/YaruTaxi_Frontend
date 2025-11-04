@@ -1,7 +1,7 @@
-import React, { useState, useRef, useEffect } from "react";
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, ActivityIndicator, KeyboardAvoidingView, Platform, Alert } from "react-native";
-import MapView, { Marker, Polyline, LatLng, Region } from "react-native-maps";
 import { Ionicons } from "@expo/vector-icons";
+import React, { useEffect, useRef, useState } from "react";
+import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import MapView, { LatLng, Marker, Polyline, Region } from "react-native-maps";
 
 import { deleteToken } from "@/services/api";
 import { router } from "expo-router";
@@ -132,7 +132,7 @@ export default function Home() {
  }
 
  return (
-  <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : undefined}>
+  <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : "height"}>
    <View style={styles.header}>
     <Text style={styles.headerText}>Yarutax</Text>
     <TouchableOpacity onPress={() => handleLogout()}>
