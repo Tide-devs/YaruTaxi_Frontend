@@ -3,7 +3,9 @@
     "name": "yarutax",
     "slug": "yarutax",
     "extra": {
-      "API_BASE_URL": "http://192.168.100.12:3000/api/"
+      "API_BASE_URL": "http://192.168.100.12:3000/api/",
+      "API_BASE_URL_SOCKET": "http://192.168.100.12:3000",
+      "API_KEY": ""
     },
     "version": "1.0.0",
     "orientation": "portrait",

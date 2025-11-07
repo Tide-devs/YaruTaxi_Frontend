@@ -7,6 +7,7 @@ import { Alert, Image, KeyboardAvoidingView, Modal, Platform, ScrollView, StyleS
 
 import { privacyPolicy, termsOfService } from '@/assets/files/legal';
 import { savedToken } from '@/services/api';
+import { connectSocket } from '@/services/socket';
 
 const baseUrl = Constants.expoConfig?.extra?.API_BASE_URL;
 
@@ -34,15 +35,25 @@ export default function LoginScreen() {
           }),
         });
         const data = await response.json();
-        if (response.ok) {
-          await savedToken(data.token)
-          const decode: any = jwtDecode(data.token)
-          if (decode.role === 'user') {
-            router.push('/home')
-          }
-        } else {
-          Alert.alert('Error', data.message)
+        if (!response.ok) {
+          Alert.alert('Error', data.message);
+          return;
         }
+
+        await savedToken(data.token);
+
+        const decode: any = jwtDecode(data.token);
+        console.log('🧩 Usuario logeado:', decode.userId);
+
+        await connectSocket();
+
+        // Redirige según el rol
+        if (decode.role === 'user') {
+          router.push('/home');
+        } else {
+          router.push('/admin');
+        }
+
       } catch (error) {
         console.error(error)
       }

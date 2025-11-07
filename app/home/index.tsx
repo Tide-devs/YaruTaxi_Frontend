@@ -4,6 +4,7 @@ import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, StyleSheet, T
 import MapView, { LatLng, Marker, Polyline, Region } from "react-native-maps";
 
 import { deleteToken } from "@/services/api";
+import { disconnectSocket } from "@/services/socket";
 import { router } from "expo-router";
 
 const ORS_API_KEY = "eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6ImUzODBmODVkMDJiZDQzMmViYTExMTg3NzUwODMxMGYxIiwiaCI6Im11cm11cjY0In0="
@@ -123,6 +124,7 @@ export default function Home() {
     {
      text: 'Yes',
      onPress: async () => {
+      await disconnectSocket();
       await deleteToken();
       router.push('/auth/login');
      }
@@ -196,6 +198,11 @@ export default function Home() {
       {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Search Driver</Text>}
      </TouchableOpacity>
     </View>
+    <View>
+     <Text>Request</Text>
+     <TouchableOpacity onPress={() => router.push('/request')}><Text>Vista solicitud</Text></TouchableOpacity>
+    </View>
+
    </View>
   </KeyboardAvoidingView>
  );

@@ -1,0 +1,9 @@
+import { Stack, Tabs } from "expo-router";
+
+export default function AdminLayout() {
+ return (
+  <Tabs screenOptions={{ headerShown: false }}>
+   <Stack.Screen name="index" />
+  </Tabs>
+ );
+}

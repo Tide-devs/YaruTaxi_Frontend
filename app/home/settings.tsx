@@ -1,16 +1,7 @@
 import { apiGet, apiPut } from "@/services/api";
+import { socket } from "@/services/socket";
 import React, { useEffect, useState } from "react";
-import {
- ActivityIndicator,
- Alert,
- KeyboardAvoidingView,
- Platform,
- StyleSheet,
- Text,
- TextInput,
- TouchableOpacity,
- View,
-} from "react-native";
+import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View, } from "react-native";
 
 interface UserProfile {
   _id: string;
@@ -29,6 +20,17 @@ export default function Settings() {
   const [editMode, setEditMode] = useState(false);
 
   useEffect(() => {
+
+    socket.on('connect', () => {
+      console.log('con' + socket.id)
+    })
+
+    socket.emit('updateProfile', 102345);
+
+    socket.on('disconnect', () => {
+      console.log('dis' + socket.id)
+    })
+
     const getProfile = async () => {
       try {
         const data = await apiGet("user/profile");
@@ -41,6 +43,10 @@ export default function Settings() {
     };
 
     getProfile();
+    return () => {
+      socket.off('connect');
+      socket.off('disconnect');
+    };
   }, []);
 
   const handleToggleEdit = async () => {
@@ -55,8 +61,13 @@ export default function Settings() {
           phone: profile.phone,
         };
 
-        // 👇 Aquí se pasa el id directamente en la URL
         await apiPut('user/profile', updatedData, false);
+
+        socket.emit('updateProfile', {
+          userId: profile._id,
+          updatedFields: updatedData,
+        });
+
         Alert.alert("Guardado", "Los cambios se guardaron correctamente ✅");
       } catch (error) {
         console.error("Error guardando cambios:", error);
@@ -85,52 +96,16 @@ export default function Settings() {
   }
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
+    <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : "height"} >
       <View style={styles.container}>
         <Text style={styles.title}>Perfil de Usuario</Text>
 
-        <TextInput
-          style={styles.input}
-          value={profile.name}
-          editable={editMode}
-          onChangeText={(text) => setProfile({ ...profile, name: text })}
-          placeholder="Nombre"
-        />
-        <TextInput
-          style={styles.input}
-          value={profile.lastName}
-          editable={editMode}
-          onChangeText={(text) => setProfile({ ...profile, lastName: text })}
-          placeholder="Apellido"
-        />
-        <TextInput
-          style={styles.input}
-          value={profile.email}
-          editable={false}
-          placeholder="Correo"
-        />
-        <TextInput
-          style={styles.input}
-          value={profile.phone}
-          editable={editMode}
-          onChangeText={(text) => setProfile({ ...profile, phone: text })}
-          placeholder="Teléfono"
-        />
-        <TextInput
-          style={styles.input}
-          value={profile.accountStatus}
-          editable={false}
-          placeholder="Estado"
-        />
-        <TextInput
-          style={styles.input}
-          value={profile.role}
-          editable={false}
-          placeholder="Rol"
-        />
+        <TextInput style={styles.input} value={profile.name} editable={editMode} onChangeText={(text) => setProfile({ ...profile, name: text })} placeholder="Nombre" />
+        <TextInput style={styles.input} value={profile.lastName} editable={editMode} onChangeText={(text) => setProfile({ ...profile, lastName: text })} placeholder="Apellido" />
+        <TextInput style={styles.input} value={profile.email} editable={false} placeholder="Correo" />
+        <TextInput style={styles.input} value={profile.phone} editable={editMode} onChangeText={(text) => setProfile({ ...profile, phone: text })} placeholder="Teléfono" />
+        <TextInput style={styles.input} value={profile.accountStatus} editable={false} placeholder="Estado" />
+        <TextInput style={styles.input} value={profile.role} editable={false} placeholder="Rol" />
 
         <TouchableOpacity style={styles.button} onPress={handleToggleEdit}>
           <Text style={styles.buttonText}>
